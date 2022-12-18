@@ -3,7 +3,7 @@ version: "3"
 services:  
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.0
     container_name: elasticsearch
     environment:
       - node.name=elasticsearch
@@ -18,22 +18,27 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ./elasticsearch_data:/usr/share/elasticsearch/data
+      - ./esdata:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
+      - 9300:9300
     networks: 
-        - observability
+      - observability
    
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.5.2
+    image: docker.elastic.co/kibana/kibana:7.13.0
     container_name: kibana
     ports:
       - 5601:5601
     environment:
       ELASTICSEARCH_URL: http://elasticsearch:9200
       ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+      ELASTIC_USERNAME: "elastic"
+      ELASTIC_PASSWORD: "DkIedPPSCb"
     networks: 
-        - observability
+      - observability
+    depends_on:
+      - elasticsearch
 
 networks:
   observability:
